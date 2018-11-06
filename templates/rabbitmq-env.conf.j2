@@ -1,0 +1,4 @@
+{{ ansible_managed | comment }}
+{% for k, v in rabbitmq_env_config.items() -%}
+{{ k | upper }}="{{ v }}"
+{% endfor -%}
