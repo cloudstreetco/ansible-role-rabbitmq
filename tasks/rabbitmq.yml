@@ -7,6 +7,12 @@
 - include: configure-cluster.yml
   when: rabbitmq_cluster
 
+# Flush handlers here, so the service start below only ensures
+# that the service is started and we don't unnecessarily restart
+# rabbitmq-server in the end
+- name: flush handlers to restart rabbitmq-server if notified
+  meta: flush_handlers
+
 - name: start rabbitmq server
   service:
     name: rabbitmq-server
