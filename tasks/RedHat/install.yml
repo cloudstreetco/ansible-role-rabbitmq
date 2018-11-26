@@ -13,7 +13,7 @@
 
 - name: import rabbitmq rpm key
   rpm_key:
-    key: https://www.rabbitmq.com/rabbitmq-release-signing-key.asc
+    key: https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
 
 - name: download rabbitmq package
   get_url:
