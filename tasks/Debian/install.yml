@@ -11,9 +11,14 @@
   apt:
     name: erlang
 
+- name: download rabbitmq rpm key
+  get_url:
+    url: https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
+    dest: /usr/src/rabbitmq-release-signing-key.asc
+
 - name: import rabbitmq rpm key
   apt_key:
-    url: https://www.rabbitmq.com/rabbitmq-release-signing-key.asc
+    file: /usr/src/rabbitmq-release-signing-key.asc
 
 - name: download rabbitmq package
   get_url:
