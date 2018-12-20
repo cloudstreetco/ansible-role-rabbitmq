@@ -2,7 +2,9 @@
 - name: add rabbitmq cluster hosts
   lineinfile:
     dest: /etc/hosts
-    line: "{{ hostvars[item].rabbitmq_cluster_ip_address | default(hostvars[item].ansible_default_ipv4.address) }} {{ hostvars[item].ansible_hostname }}"
+    backrefs: yes
+    regexp: "^{{ hostvars[item].rabbitmq_cluster_ip_address | default(hostvars[item].ansible_default_ipv4.address) }} {{ hostvars[item].ansible_hostname }}(.*)$"
+    line: '{{ hostvars[item].rabbitmq_cluster_ip_address | default(hostvars[item].ansible_default_ipv4.address) }} {{ hostvars[item].ansible_hostname }}\1'
   with_items: "{{ ansible_play_hosts }}"
 
 - name: set erlang cookie
