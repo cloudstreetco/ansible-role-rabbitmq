@@ -15,10 +15,6 @@
     - rabbitmq_nodename == rabbitmq_cluster_master
     - rabbitmq_current_cluster != rabbitmq_cluster_name
 
-- debug: var=rabbitmq_cluster_master
-- debug: var=rabbitmq_current_cluster
-- debug: var=rabbitmq_cluster_name
-
 - name: check if joined to cluster
   set_fact:
     rabbitmq_join_cluster: True
