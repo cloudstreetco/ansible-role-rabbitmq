@@ -1,15 +1,55 @@
 ---
+- name: get cluster status
+  command: rabbitmqctl cluster_status
+  register: rabbitmq_cluster_status
+  changed_when: no
+  ignore_errors: True
+
+- name: get cluster name
+  set_fact:
+    rabbitmq_current_cluster: "{{ rabbitmq_cluster_status.stdout.split('cluster_name,<<')[-1].split('>>')[0].strip('\"') }}"
+
+- name: set cluster name
+  command: "rabbitmqctl set_cluster_name {{ rabbitmq_cluster_name }}"
+  when: 
+    - rabbitmq_nodename == rabbitmq_cluster_master
+    - rabbitmq_current_cluster != rabbitmq_cluster_name
+
+- debug: var=rabbitmq_cluster_master
+- debug: var=rabbitmq_current_cluster
+- debug: var=rabbitmq_cluster_name
+
+- name: check if joined to cluster
+  set_fact:
+    rabbitmq_join_cluster: True
+  when:
+    - rabbitmq_nodename != rabbitmq_cluster_master
+    - rabbitmq_current_cluster != rabbitmq_cluster_name
+
 - name: stop rabbitmq app
   shell: rabbitmqctl stop_app
+  when:
+    - rabbitmq_join_cluster
+    - rabbitmq_nodename != rabbitmq_cluster_master
 
 - name: join rabbitmq cluster
   shell: "rabbitmqctl join_cluster {{ rabbitmq_cluster_master }}"
   register: rabbitmq_output
+  when:
+    - rabbitmq_join_cluster
+    - rabbitmq_nodename != rabbitmq_cluster_master
   ignore_errors: True
 
 - name: ensure rabbitmq cluster member
   fail: msg="Unable to join the cluster."
-  when: ("'already_member' not in rabbitmq_output.stderr") and rabbitmq_output.rc != 0
+  when:
+    - rabbitmq_join_cluster
+    - rabbitmq_nodename != rabbitmq_cluster_master
+    - "'already_member' not in rabbitmq_output.stderr"
+    - rabbitmq_output.rc != 0
 
 - name: start rabbitmq app
   shell: rabbitmqctl start_app
+  when:
+    - rabbitmq_join_cluster
+    - rabbitmq_nodename != rabbitmq_cluster_master

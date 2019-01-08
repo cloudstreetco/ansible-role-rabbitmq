@@ -26,4 +26,4 @@
 - include: plugins.yml
 
 - include: cluster.yml
-  when: rabbitmq_cluster and rabbitmq_nodename != rabbitmq_cluster_master
+  when: rabbitmq_cluster

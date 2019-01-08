@@ -5,6 +5,10 @@ rabbitmq_cluster_master: "rabbit@{{ hostvars[ansible_play_hosts.0].ansible_hostn
 
 rabbitmq_cluster_hosts: True
 
+rabbitmq_join_cluster: False
+
+rabbitmq_cluster_name: "{{ rabbitmq_cluster_master }}"
+
 rabbitmq_erlang_cookie_file: /var/lib/rabbitmq/.erlang.cookie
 
 rabbitmq_plugin_dir: "/usr/lib/rabbitmq/lib/rabbitmq_server-{{ rabbitmq_version.split('-').0 }}/plugins"
